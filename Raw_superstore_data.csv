@@ -1,0 +1,101 @@
+Order_ID,Order_Date,Customer_Name,Segment,Region,Category,Product_Name,Sales,Quantity,Discount,Profit
+ORD-1001,2023-11-24,Vihaan Singh,Consumer,Central,Furniture,Product-15,504.66,2,0.0,467.64
+ORD-1002,2023-01-17,Aarav Sharma,Consumer,West,Furniture,Product-33,1845.85,9,0.1,630.83
+ORD-1003,2023-12-26,Sneha Kulkarni,Corporate,West,Office Supplies,Product-38,906.75,1,0.1,607.58
+ORD-1004,2023-06-24,Diya Malhotra,Consumer,West,Office Supplies,Product-7,368.96,2,0.2,801.74
+ORD-1005,2023-11-06,Diya Malhotra,Consumer,South,Technology,Product-8,2922.04,7,0.0,417.65
+ORD-1006,2023-11-18,Manish Tiwari,Corporate,West,Technology,Product-5,232.89,4,0.2,980.79
+ORD-1007,2023-04-30,Vihaan Singh,Corporate,Central,Office Supplies,Product-24,571.7,6,0.1,571.23
+ORD-1008,2023-12-26,Deepak Mishra,Home Office,East,Technology,Product-11,1649.01,4,0.1,300.94
+ORD-1009,2023-05-19,Suresh Yadav,Home Office,West,Technology,Product-21,2544.27,1,0.1,768.34
+ORD-1010,2023-06-11,Rahul Khanna,Corporate,East,Furniture,Product-37,2641.47,6,0.1,552.07
+ORD-1011,2023-07-22,Suresh Yadav,Corporate,West,Office Supplies,Product-9,815.22,9,0.2,671.12
+ORD-1012,2023-08-08,Karan Malhotra,Corporate,Central,Furniture,Product-9,1577.63,2,0.0,819.43
+ORD-1013,2023-03-20,Suresh Yadav,Consumer,South,Technology,Product-5,1215.83,10,0.3,387.85
+ORD-1014,2023-10-11,Aarav Sharma,Home Office,East,Technology,Product-35,2277.55,6,0.0,81.55
+ORD-1015,2023-03-22,Amit Agarwal,Consumer,Central,Technology,Product-12,1572.28,2,0.2,794.17
+ORD-1016,2023-09-17,Manish Tiwari,Consumer,West,Office Supplies,Product-11,1664.2,9,0.0,478.63
+ORD-1017,2023-09-08,Aarav Sharma,Consumer,Central,Office Supplies,Product-16,267.98,10,0.0,-188.65
+ORD-1018,2023-09-06,Aditya Verma,Home Office,West,Furniture,Product-31,2845.86,3,0.2,385.98
+ORD-1019,2023-11-07,Siddharth Jain,Consumer,West,Technology,Product-20,1257.08,6,0.3,869.5
+ORD-1020,2023-08-20,Vihaan Singh,Consumer,West,Furniture,Product-22,161.0,9,0.1,464.97
+ORD-1021,2023-01-04,Aditya Verma,Home Office,East,Furniture,Product-5,2725.72,6,0.0,368.4
+ORD-1022,2023-05-23,Deepak Mishra,Corporate,West,Technology,Product-9,2197.72,10,0.3,15.9
+ORD-1023,2023-08-31,Siddharth Jain,Consumer,East,Furniture,Product-28,1127.46,7,0.3,822.99
+ORD-1024,2023-01-28,Deepak Mishra,Home Office,East,Furniture,Product-26,2211.82,2,0.1,-50.93
+ORD-1025,2023-10-02,Amit Agarwal,Consumer,South,Furniture,Product-18,1441.62,2,0.3,750.43
+ORD-1026,2023-10-09,Vihaan Singh,Consumer,East,Furniture,Product-16,582.3,8,0.3,-22.13
+ORD-1027,2023-07-25,Vivaan Patel,Consumer,South,Furniture,Product-25,869.09,8,0.2,249.91
+ORD-1028,2023-10-12,Deepak Mishra,Home Office,South,Furniture,Product-13,960.45,1,0.0,672.37
+ORD-1029,2023-01-30,Vivaan Patel,Home Office,South,Technology,Product-34,556.55,9,0.0,806.75
+ORD-1030,2023-02-05,Manish Tiwari,Consumer,West,Office Supplies,Product-8,2830.63,10,0.1,452.59
+ORD-1031,2023-01-21,Manish Tiwari,Consumer,South,Technology,Product-38,1739.16,6,0.2,-34.46
+ORD-1032,2023-06-10,Ananya Iyer,Corporate,South,Furniture,Product-20,1425.95,2,0.0,295.77
+ORD-1033,2023-10-16,Vihaan Singh,Consumer,West,Technology,Product-17,484.12,6,0.0,843.05
+ORD-1034,2023-07-09,Kavya Nair,Consumer,South,Technology,Product-20,1873.87,9,0.0,568.22
+ORD-1035,2023-10-11,Kavya Nair,Home Office,East,Furniture,Product-17,434.74,2,0.1,54.05
+ORD-1036,2023-11-06,Rohan Gupta,Home Office,Central,Furniture,Product-17,1565.69,5,0.0,-180.01
+ORD-1037,2023-08-05,Diya Malhotra,Consumer,East,Office Supplies,Product-9,1947.63,5,0.1,663.6
+ORD-1038,2023-10-10,Alok Srivastava,Corporate,East,Furniture,Product-5,2840.65,3,0.0,784.97
+ORD-1039,2023-10-26,Sneha Kulkarni,Consumer,South,Furniture,Product-3,993.95,1,0.2,-26.9
+ORD-1040,2023-05-08,Deepak Mishra,Consumer,Central,Technology,Product-27,2924.13,3,0.1,823.99
+ORD-1041,2023-04-01,Siddharth Jain,Consumer,West,Technology,Product-22,2368.92,7,0.1,46.85
+ORD-1042,2023-12-26,Vihaan Singh,Corporate,East,Office Supplies,Product-15,678.76,8,0.2,96.75
+ORD-1043,2023-04-27,Ananya Iyer,Consumer,West,Office Supplies,Product-22,907.95,2,0.2,156.49
+ORD-1044,2023-09-18,Rahul Khanna,Home Office,Central,Furniture,Product-8,2643.41,5,0.1,454.77
+ORD-1045,2023-05-16,Vivaan Patel,Consumer,South,Office Supplies,Product-21,1365.54,9,0.0,200.75
+ORD-1046,2023-10-23,Rohan Gupta,Corporate,East,Technology,Product-28,104.9,9,0.1,173.49
+ORD-1047,2023-02-05,Deepak Mishra,Corporate,Central,Technology,Product-8,2187.29,5,0.2,566.96
+ORD-1048,2023-06-17,Rahul Khanna,Home Office,Central,Technology,Product-9,656.34,7,0.1,500.17
+ORD-1049,2023-06-04,Rahul Khanna,Home Office,East,Office Supplies,Product-19,709.53,10,0.2,304.48
+ORD-1050,2023-08-15,Deepak Mishra,Consumer,South,Technology,Product-11,2010.67,5,0.2,-178.6
+ORD-1051,2023-05-01,Deepak Mishra,Corporate,West,Furniture,Product-10,170.83,4,0.3,494.66
+ORD-1052,2023-02-07,Amit Agarwal,Corporate,West,Technology,Product-25,1533.69,4,0.1,552.88
+ORD-1053,2023-01-03,Mohit Goyal,Consumer,South,Furniture,Product-12,2431.92,9,0.3,-234.72
+ORD-1054,2023-05-08,Vihaan Singh,Corporate,West,Office Supplies,Product-34,2964.89,10,0.2,935.05
+ORD-1055,2023-08-15,Manish Tiwari,Home Office,South,Technology,Product-29,2701.9,8,0.3,36.95
+ORD-1056,2023-05-07,Suresh Yadav,Corporate,South,Technology,Product-16,896.33,2,0.2,4.84
+ORD-1057,2023-06-21,Neha Kapoor,Home Office,East,Furniture,Product-10,770.66,3,0.1,-216.5
+ORD-1058,2023-07-28,Neha Kapoor,Home Office,South,Office Supplies,Product-4,699.82,7,0.3,876.29
+ORD-1059,2023-10-27,Alok Srivastava,Consumer,South,Office Supplies,Product-1,2833.95,5,0.3,809.48
+ORD-1060,2023-08-03,Sneha Kulkarni,Home Office,West,Office Supplies,Product-15,891.51,8,0.0,205.51
+ORD-1061,2023-12-09,Deepak Mishra,Corporate,West,Office Supplies,Product-9,2944.09,9,0.0,879.01
+ORD-1062,2023-10-31,Karan Malhotra,Home Office,East,Furniture,Product-28,493.53,8,0.1,-234.63
+ORD-1063,2023-07-14,Neha Kapoor,Consumer,South,Office Supplies,Product-22,2307.57,7,0.2,677.61
+ORD-1064,2023-08-04,Diya Malhotra,Consumer,South,Furniture,Product-35,251.05,6,0.1,545.19
+ORD-1065,2023-11-30,Vivaan Patel,Consumer,West,Furniture,Product-2,1901.87,4,0.1,315.63
+ORD-1066,2023-02-28,Karan Malhotra,Consumer,South,Technology,Product-17,2324.0,3,0.0,711.13
+ORD-1067,2023-03-25,Kavya Nair,Consumer,East,Office Supplies,Product-37,2064.31,7,0.3,923.91
+ORD-1068,2023-04-12,Aditya Verma,Home Office,West,Furniture,Product-20,2565.85,10,0.0,735.1
+ORD-1069,2023-10-17,Vivaan Patel,Corporate,South,Technology,Product-24,299.97,6,0.0,804.45
+ORD-1070,2023-09-08,Vihaan Singh,Corporate,Central,Technology,Product-30,2151.2,7,0.1,653.93
+ORD-1071,2023-11-30,Diya Malhotra,Home Office,South,Office Supplies,Product-28,2494.63,10,0.2,119.0
+ORD-1072,2023-05-06,Aditya Verma,Corporate,South,Furniture,Product-30,1752.56,7,0.2,-262.69
+ORD-1073,2023-06-16,Sai Reddy,Corporate,West,Office Supplies,Product-17,1086.98,10,0.2,422.53
+ORD-1074,2023-09-22,Rohan Gupta,Consumer,West,Technology,Product-27,1516.88,4,0.3,539.67
+ORD-1075,2023-09-09,Amit Agarwal,Consumer,East,Office Supplies,Product-15,1272.76,4,0.2,563.15
+ORD-1076,2023-07-08,Nikhil Bansal,Home Office,Central,Office Supplies,Product-36,1059.29,8,0.2,98.61
+ORD-1077,2023-04-29,Vihaan Singh,Home Office,West,Office Supplies,Product-8,2254.36,3,0.1,-18.7
+ORD-1078,2023-09-05,Diya Malhotra,Home Office,Central,Furniture,Product-13,959.11,6,0.1,92.95
+ORD-1079,2023-12-29,Sneha Kulkarni,Consumer,Central,Furniture,Product-4,1704.74,3,0.3,-166.64
+ORD-1080,2023-01-07,Karan Malhotra,Corporate,South,Office Supplies,Product-29,1088.05,1,0.2,923.38
+ORD-1081,2023-09-02,Vihaan Singh,Consumer,South,Office Supplies,Product-5,1773.36,1,0.1,-106.04
+ORD-1082,2023-10-16,Kavya Nair,Consumer,West,Furniture,Product-36,2316.89,10,0.1,708.4
+ORD-1083,2023-07-14,Amit Agarwal,Corporate,Central,Technology,Product-28,985.6,10,0.0,492.52
+ORD-1084,2023-02-20,Mohit Goyal,Consumer,West,Office Supplies,Product-6,555.47,3,0.0,-96.51
+ORD-1085,2023-07-29,Amit Agarwal,Home Office,South,Office Supplies,Product-3,771.28,5,0.3,-207.47
+ORD-1086,2023-04-30,Diya Malhotra,Home Office,West,Office Supplies,Product-8,1679.23,3,0.2,774.62
+ORD-1087,2023-02-06,Vivaan Patel,Consumer,Central,Technology,Product-37,2771.46,8,0.0,309.31
+ORD-1088,2023-06-05,Alok Srivastava,Corporate,Central,Technology,Product-35,1532.01,2,0.0,856.25
+ORD-1089,2023-06-15,Manish Tiwari,Corporate,East,Furniture,Product-15,2889.54,10,0.0,999.44
+ORD-1090,2023-12-11,Diya Malhotra,Home Office,East,Furniture,Product-31,1605.0,8,0.2,-64.06
+ORD-1091,2023-10-27,Siddharth Jain,Home Office,South,Furniture,Product-31,1109.09,6,0.2,571.17
+ORD-1092,2023-03-24,Neha Kapoor,Corporate,South,Office Supplies,Product-26,2459.34,9,0.0,291.27
+ORD-1093,2023-06-11,Diya Malhotra,Corporate,East,Office Supplies,Product-33,2492.29,1,0.3,237.22
+ORD-1094,2023-04-07,Priya Saxena,Corporate,South,Technology,Product-29,2303.97,4,0.2,413.99
+ORD-1095,2023-05-28,Amit Agarwal,Home Office,South,Furniture,Product-2,2922.13,10,0.1,622.72
+ORD-1096,2023-06-09,Sneha Kulkarni,Consumer,South,Furniture,Product-15,2977.55,2,0.3,931.18
+ORD-1097,2023-11-28,Arjun Mehta,Corporate,Central,Technology,Product-18,1304.92,8,0.3,16.85
+ORD-1098,2023-10-10,Arjun Mehta,Corporate,West,Technology,Product-33,2264.25,3,0.0,59.12
+ORD-1099,2023-08-01,Neha Kapoor,Home Office,Central,Furniture,Product-19,2205.55,10,0.3,824.84
+ORD-1100,2023-08-17,Sneha Kulkarni,Corporate,Central,Office Supplies,Product-36,2312.33,7,0.3,912.71

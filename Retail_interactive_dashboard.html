@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Retail Sales &amp; Profit Performance Analytics | SQL Server + Tableau</title>
+<meta name="description" content="Interactive walkthrough of a retail analytics project: SQL Server data cleaning and analysis, then a Tableau dashboard of sales, profit, customers and discounts.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--accent:#2853B0;--accent-soft:#E1E9F9;--accent-d:#83A6F2;--accent-soft-d:#16233F;--c2:#D6901A}
+:root{
+  --ink:#0E1A2B;--paper:#F3F5F7;--panel:#FFFFFF;--line:#D6DCE4;--muted:#55627A;
+  --neg:#C4453A;--amber:#D6901A;--code-bg:#0E1A2B;--code-ink:#DCE6F5;
+  --display:"Bricolage Grotesque","Arial Narrow",Arial,sans-serif;
+  --body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ink:#E8EDF5;--paper:#0B1320;--panel:#131F31;--line:#25354C;--muted:#95A3BA;--neg:#F27C70;--amber:#F0B446;
+    --code-bg:#08101B;--code-ink:#D5E0F2;--accent:var(--accent-d);--accent-soft:var(--accent-soft-d);
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#E8EDF5;--paper:#0B1320;--panel:#131F31;--line:#25354C;--muted:#95A3BA;--neg:#F27C70;--amber:#F0B446;
+  --code-bg:#08101B;--code-ink:#D5E0F2;--accent:var(--accent-d);--accent-soft:var(--accent-soft-d);
+}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;scroll-padding-top:calc(76px + env(safe-area-inset-top,0px))}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1rem/1.6 var(--body);-webkit-font-smoothing:antialiased}
+:focus-visible{outline:3px solid var(--amber);outline-offset:2px;border-radius:4px}
+.wrap{max-width:1160px;margin:0 auto;padding:0 clamp(16px,4vw,40px)}
+h1,h2,h3{font-family:var(--display);line-height:1.08;margin:0;letter-spacing:-.02em}
+p{margin:0 0 1em;max-width:70ch}
+button{font:inherit;color:inherit;cursor:pointer}
+
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:14px;height:60px}
+.brand{font:700 1rem var(--display);text-decoration:none;white-space:nowrap;color:inherit}
+.top nav{display:flex;gap:2px;overflow-x:auto;margin-left:auto}
+.top nav a{padding:8px 12px;border-radius:999px;text-decoration:none;color:var(--muted);font-size:.9rem;font-weight:500;white-space:nowrap}
+.top nav a:hover,.top nav a.on{background:var(--accent-soft);color:var(--ink)}
+.theme{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 12px;font-size:.85rem}
+
+.hero{padding:clamp(40px,7vw,88px) 0 clamp(28px,4vw,48px)}
+.hero h1{font-size:clamp(2.3rem,6vw,4.4rem);font-weight:800;letter-spacing:-.035em;max-width:16ch}
+.hero .lede{font-size:1.15rem;color:var(--muted);margin-top:20px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.chip{display:inline-block;padding:4px 12px;border-radius:999px;background:var(--accent-soft);font-size:.84rem;font-weight:600}
+
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(min-width:760px){.kpis{grid-template-columns:repeat(var(--n,4),1fr)}}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;border-top:4px solid var(--accent)}
+.kpi b{display:block;font:800 clamp(1.6rem,3.4vw,2.4rem)/1 var(--display);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.kpi span{font-size:.86rem;color:var(--muted)}
+
+section.blk{padding:clamp(40px,6vw,72px) 0;border-top:1px solid var(--line)}
+section.blk>.wrap>h2{font-size:clamp(1.7rem,3.6vw,2.6rem);font-weight:800;margin-bottom:8px;padding-left:16px;border-left:5px solid var(--accent)}
+.intro{color:var(--muted);margin:0 0 26px;padding-left:21px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px}
+.card h3{font:700 1.1rem var(--display);letter-spacing:-.01em;margin-bottom:4px}
+.note{font-size:.86rem;color:var(--muted);margin:0 0 16px}
+.grid2{display:grid;gap:18px;grid-template-columns:1fr}
+@media(min-width:900px){.grid2{grid-template-columns:1fr 1fr}}
+.grid2>*,.split>*{min-width:0}
+
+/* tabs & segmented */
+.tablist{display:flex;gap:8px;overflow-x:auto;margin-bottom:18px;padding-bottom:2px}
+.tablist button{flex:0 0 auto;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 16px;min-width:170px}
+.tablist button b{display:block;font-family:var(--display);font-size:1rem}
+.tablist button span{font-size:.82rem;color:var(--muted)}
+.tablist button[aria-selected="true"]{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 -4px 0 var(--accent)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:clamp(18px,3vw,30px)}
+.ctrl{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:18px}
+.ctrl label{font-size:.88rem;color:var(--muted)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--paper)}
+.seg button{border:0;background:transparent;padding:7px 14px;font-size:.88rem;font-weight:500}
+.seg button[aria-pressed="true"]{background:var(--accent);color:#fff}
+select,input[type=search]{font:inherit;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink)}
+input[type=search]{min-width:min(100%,260px)}
+
+/* bars */
+.bars{list-style:none;margin:0;padding:0;display:grid;gap:9px}
+.bars li{display:grid;grid-template-columns:minmax(96px,160px) 1fr auto;gap:10px;align-items:center;font-size:.92rem;padding:2px 0;border-radius:6px}
+.bars li:hover{background:color-mix(in srgb,var(--accent) 8%,transparent)}
+.bars .lbl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bars .val{font-variant-numeric:tabular-nums;font-weight:600;min-width:56px;text-align:right}
+.track{display:block;height:16px;background:color-mix(in srgb,var(--ink) 8%,transparent);border-radius:4px;overflow:hidden}
+.fill{display:block;height:100%;width:0;background:var(--accent);border-radius:4px;transition:width .7s cubic-bezier(.2,.7,.2,1)}
+.go .fill{width:var(--w)}
+.key{display:flex;gap:16px;font-size:.84rem;color:var(--muted);margin:0 0 12px}
+.key i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px}
+
+/* donut */
+.dwrap{display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.dwrap svg{width:170px;height:170px;flex:0 0 auto;overflow:visible}
+.seg-c{transition:opacity .2s,stroke-width .2s;cursor:pointer}
+.seg-c.dim{opacity:.3}
+.dv{font:800 20px var(--display);fill:var(--ink)}.dl{font:500 9px var(--body);fill:var(--muted)}
+.legend{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.legend button{display:flex;align-items:center;gap:8px;width:100%;background:transparent;border:1px solid transparent;border-radius:8px;padding:6px 10px;text-align:left}
+.legend button:hover,.legend button.on{border-color:var(--line);background:var(--paper)}
+.legend i{width:12px;height:12px;border-radius:3px;flex:0 0 auto}
+.legend b{margin-left:auto;padding-left:16px;font-variant-numeric:tabular-nums}
+
+/* tables */
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;font-size:.93rem}
+th,td{text-align:left;padding:11px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--accent-soft);font-weight:600;white-space:nowrap}
+th[role=button]{cursor:pointer;user-select:none}
+th[data-o="a"]::after{content:" ▲";font-size:.7em}th[data-o="d"]::after{content:" ▼";font-size:.7em}
+tr:last-child td{border-bottom:0}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+
+/* details */
+details{background:var(--panel);border:1px solid var(--line);border-radius:12px;margin-bottom:10px}
+summary{padding:15px 18px;cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:16px}
+summary::after{content:"+";font:600 1.3rem/1 var(--display);color:var(--accent)}
+details[open] summary::after{content:"–"}
+details>div{padding:0 18px 16px;color:var(--muted)}
+details>div b{color:var(--ink)}
+
+/* checklist */
+.check{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.check label{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--panel);cursor:pointer}
+.check input{margin-top:.3em;width:18px;height:18px;accent-color:var(--accent);flex:0 0 auto}
+.check input:checked+span{color:var(--muted);text-decoration:line-through}
+.prog{display:flex;align-items:center;gap:12px;margin-bottom:14px;font-size:.9rem;color:var(--muted)}
+.prog .bar{flex:1;height:8px;background:color-mix(in srgb,var(--ink) 10%,transparent);border-radius:99px;overflow:hidden}
+.prog .bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .4s}
+
+/* code */
+.codebox{position:relative}
+.code{background:var(--code-bg);color:var(--code-ink);padding:20px;border-radius:12px;overflow-x:auto;font:.85rem/1.65 var(--mono);margin:0;white-space:pre}
+.code .k{color:#7FB2FF;font-weight:600}.code .s{color:#F3C56B}.code .c{color:#7C8CA6}
+.copy{position:absolute;top:10px;right:10px;background:#ffffff1f;color:#fff;border:1px solid #ffffff40;border-radius:8px;padding:4px 10px;font-size:.8rem}
+.copy:hover{background:#ffffff38}
+
+/* split explorer */
+.split{display:grid;gap:18px;grid-template-columns:1fr}
+@media(min-width:900px){.split{grid-template-columns:300px 1fr}}
+.steps{display:flex;flex-direction:column;gap:6px}
+.steps button{display:flex;gap:12px;align-items:center;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.steps button i{font:700 .85rem var(--display);font-style:normal;width:28px;height:28px;border-radius:50%;background:var(--accent-soft);display:grid;place-items:center;flex:0 0 auto}
+.steps button[aria-selected="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.steps button[aria-selected="true"] i{background:var(--accent);color:#fff}
+.nav2{display:flex;justify-content:space-between;margin-top:16px}
+.btn{border:1.5px solid var(--ink);background:var(--ink);color:var(--paper);border-radius:10px;padding:10px 18px;font-weight:600}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn[disabled]{opacity:.4;cursor:default}
+
+/* bubbles */
+.bubbles{display:flex;flex-wrap:wrap;align-items:center;gap:14px;min-height:240px}
+.bub{border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#fff;font-weight:700;font-size:.72rem;line-height:1.25;border:0;padding:4px;overflow:hidden;transition:transform .2s}
+.bub:hover,.bub:focus-visible{transform:scale(1.06)}
+.bub small{display:block;font-weight:500;opacity:.9}
+
+.stat2{display:flex;gap:30px;flex-wrap:wrap;margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.stat2 b{display:block;font:800 1.7rem/1 var(--display);font-variant-numeric:tabular-nums}
+.stat2 span{font-size:.84rem;color:var(--muted)}
+.callout{border-left:4px solid var(--amber);background:color-mix(in srgb,var(--amber) 12%,var(--panel));padding:12px 16px;border-radius:0 10px 10px 0;font-size:.92rem;margin:16px 0 0;max-width:78ch}
+.finds{list-style:none;padding:0;margin:0;max-width:80ch}
+.finds li{padding:16px 0 16px 20px;border-bottom:1px solid var(--line);border-left:3px solid var(--accent);margin-bottom:10px;background:var(--panel);border-radius:0 10px 10px 0;padding-right:16px;border-bottom:0}
+.finds b{font-family:var(--display);display:block}
+.finds span{color:var(--muted)}
+.tip{position:fixed;z-index:99;background:var(--ink);color:var(--paper);padding:6px 10px;border-radius:8px;font-size:.82rem;pointer-events:none;max-width:280px}
+footer{padding:28px 0 44px;border-top:1px solid var(--line);color:var(--muted);font-size:.88rem}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.fill,.seg-c,.bub,.prog .bar i{transition:none}}
+
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a class="brand" href="#top">Retail Sales &amp; Profit</a>
+  <nav aria-label="Sections">
+    <a href="#dashboard">Dashboard</a><a href="#sql">SQL workflow</a><a href="#reference">Reference</a><a href="#questions">Questions</a>
+  </nav>
+  <button class="theme" id="themeBtn" type="button">Theme</button>
+</div></header>
+
+<main id="top">
+<section class="hero"><div class="wrap">
+  <h1>Retail Sales &amp; Profit Performance Analytics</h1>
+  <p class="lede">Retail orders are inspected, cleaned and queried in SQL Server, then turned into an interactive Tableau dashboard covering sales, profit, customers, monthly trends, categories and discounts.</p>
+  <div class="chips"><span class="chip">SQL Server</span><span class="chip">Tableau</span><span class="chip">Data cleaning</span><span class="chip">Aggregates and window functions</span></div>
+  <div class="kpis" style="--n:5;margin-top:34px">
+    <div class="kpi"><b>160,828</b><span>total sales</span></div>
+    <div class="kpi"><b>41,379</b><span>total profit</span></div>
+    <div class="kpi"><b>23</b><span>total customers</span></div>
+    <div class="kpi"><b>100</b><span>total orders</span></div>
+    <div class="kpi"><b>1,608</b><span>average order value</span></div>
+  </div>
+</div></section>
+
+<section class="blk" id="dashboard"><div class="wrap">
+  <h2>Explore the Tableau dashboard</h2>
+  <p class="intro">Each tab rebuilds one dashboard element from the report figures. Change the view with the controls and hover for detail.</p>
+  <div id="dash">
+    <div class="tablist" role="tablist" aria-label="Dashboard elements">
+      <button role="tab"><b>Top customers</b><span>Treemap in Tableau</span></button>
+      <button role="tab"><b>Categories</b><span>Sales and profit</span></button>
+      <button role="tab"><b>Discount impact</b><span>Profit by group</span></button>
+      <button role="tab"><b>Monthly trend</b><span>Sales by month</span></button>
+    </div>
+
+    <div class="panel" role="tabpanel">
+      <div class="ctrl">
+        <label>Show <select id="custN"><option value="3">Top 3</option><option value="5">Top 5</option><option value="10" selected>Top 10</option></select></label>
+        <div class="seg" id="custSort"><button aria-pressed="true" data-v="sales">By sales</button><button aria-pressed="false" data-v="name">By name</button></div>
+      </div>
+      <div class="grid2">
+        <ul class="bars" id="custBars"></ul>
+        <div class="card">
+          <h3>Share of total sales</h3>
+          <p class="note">Shown customers together, against total sales of 160,828 across 23 customers.</p>
+          <div class="stat2" style="border:0;margin:0;padding:0">
+            <div><b id="custSum">–</b><span>sales from shown customers</span></div>
+            <div><b id="custShare">–</b><span>of total sales (calculated)</span></div>
+          </div>
+          <p class="callout">Deepak Mishra is the largest displayed customer at 17,256.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" role="tabpanel" hidden>
+      <div class="ctrl">
+        <div class="seg" id="catMetric"><button aria-pressed="true" data-v="both">Sales and profit</button><button aria-pressed="false" data-v="sales">Sales</button><button aria-pressed="false" data-v="profit">Profit</button><button aria-pressed="false" data-v="margin">Profit margin</button></div>
+      </div>
+      <div class="grid2">
+        <div class="card"><h3 id="catTitle">Sales and profit by category</h3><p class="key" id="catKey"></p><ul class="bars" id="catBars"></ul></div>
+        <div class="card"><h3>Category details</h3>
+          <div class="scroll" style="margin-top:12px"><table id="catTable">
+            <thead><tr><th>Category</th><th>Sales</th><th>Profit</th><th>Margin</th></tr></thead><tbody></tbody></table></div>
+          <p class="note" style="margin-top:12px">Margin is profit divided by sales, calculated here. Click a column to sort.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" role="tabpanel" hidden>
+      <div class="ctrl">
+        <div class="seg" id="discMetric"><button aria-pressed="true" data-v="profit">Profit</button><button aria-pressed="false" data-v="sales">Sales</button><button aria-pressed="false" data-v="ratio">Profit per 100 sales</button></div>
+      </div>
+      <div class="grid2">
+        <div class="card"><h3 id="discTitle">Profit by discount group</h3><ul class="bars" id="discBars" style="margin-top:14px"></ul>
+          <p class="note" style="margin-top:14px">The dashboard displays two Medium groups, so both are shown.</p></div>
+        <div class="card"><h3>Group figures</h3>
+          <div class="scroll" style="margin-top:12px"><table id="discTable">
+            <thead><tr><th>Discount group</th><th>Sales</th><th>Profit</th><th>Per 100 sales</th></tr></thead><tbody></tbody></table></div>
+          <p class="callout">The dashboard compares profit across discount groups. The High group shows the largest profit and the Low group the smallest.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" role="tabpanel" hidden>
+      <div class="grid2">
+        <div class="card"><h3>Highest and lowest labeled months</h3><p class="note">Among the labeled points on the line chart</p>
+          <div class="stat2" style="border:0;margin:0;padding:0"><div><b>19,438</b><span>highest displayed</span></div><div><b>7,312</b><span>lowest displayed</span></div></div>
+          <div class="stat2"><div><b id="swing">–</b><span>gap between the two (calculated)</span></div></div>
+        </div>
+        <div class="card"><h3>What the chart shows</h3><p style="margin-top:8px">A line chart of month-to-month sales values with visible variation across the year. Filters for category, segment, region and quarter of order date let a viewer narrow the trend.</p>
+          <div class="chips" style="margin-top:0"><span class="chip">Category</span><span class="chip">Segment</span><span class="chip">Region</span><span class="chip">Quarter of order date</span></div></div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<section class="blk" id="sql"><div class="wrap">
+  <h2>SQL Server workflow</h2>
+  <p class="intro">The nine steps from raw table to dashboard. Step through them or jump to any one.</p>
+  <div class="split">
+    <div class="steps" id="stepList" role="tablist" aria-orientation="vertical" aria-label="Workflow steps"></div>
+    <div class="card" id="stepCard">
+      <h3 id="stepTitle" style="font-size:1.4rem"></h3>
+      <p id="stepDesc" style="margin-top:8px"></p>
+      <div class="codebox" id="stepCodeBox"><pre class="code" id="stepCode"></pre><button class="copy" id="stepCopy" type="button">Copy</button></div>
+      <p class="callout" id="stepNote" hidden></p>
+      <div class="nav2"><button class="btn ghost" id="prev" type="button">Previous</button><button class="btn" id="next" type="button">Next step</button></div>
+    </div>
+  </div>
+  <p class="note" style="margin-top:16px">SQL is simplified from the report screenshots, which are the only source for the statements.</p>
+</div></section>
+
+<section class="blk" id="reference"><div class="wrap">
+  <h2>Reference</h2>
+  <p class="intro">Fields, tools, techniques and dashboard components. Search or sort any table.</p>
+
+  <h3 style="margin-bottom:12px;font-size:1.3rem">Dataset fields in Superstore_sql</h3>
+  <div class="chips" id="fields" style="margin:0 0 34px"></div>
+
+  <div class="grid2">
+    <div>
+      <h3 style="margin-bottom:12px;font-size:1.3rem">SQL techniques used</h3>
+      <div class="ctrl"><input type="search" id="techSearch" placeholder="Search techniques" aria-label="Search techniques"></div>
+      <div class="scroll"><table id="techTable"><thead><tr><th>Technique</th><th>Purpose</th><th>Evidence</th></tr></thead><tbody>
+        <tr><td>SELECT</td><td>Retrieve and inspect records</td><td>SELECT * FROM Superstore_sql</td></tr>
+        <tr><td>CASE</td><td>Conditional data checks</td><td>NULL counting</td></tr>
+        <tr><td>UPDATE</td><td>Correct missing values</td><td>Profit and Customer_Name</td></tr>
+        <tr><td>GROUP BY</td><td>Group records</td><td>Duplicate Order_ID check</td></tr>
+        <tr><td>HAVING</td><td>Filter grouped results</td><td>COUNT(*) &gt; 1</td></tr>
+        <tr><td>Aggregate functions</td><td>Summarize data</td><td>Analytical summaries</td></tr>
+        <tr><td>Window functions</td><td>Calculations that keep row-level detail</td><td>Stated in the workflow</td></tr>
+        <tr><td>ALTER / structural SQL</td><td>Modify table structure when required</td><td>Stated in the workflow</td></tr>
+      </tbody></table></div>
+      <p class="callout">The screenshots do not show the exact window-function or ALTER statements, so no specific function or ALTER operation is claimed.</p>
+    </div>
+    <div>
+      <h3 style="margin-bottom:12px;font-size:1.3rem">Dashboard components</h3>
+      <div class="ctrl"><input type="search" id="compSearch" placeholder="Search components" aria-label="Search components"></div>
+      <div class="scroll"><table id="compTable"><thead><tr><th>Element</th><th>What it shows</th></tr></thead><tbody>
+        <tr><td>KPI cards</td><td>Total sales 160,828; total profit 41,379; total customers 23; total orders 100; average order value 1,608</td></tr>
+        <tr><td>Top 10 customers by sales</td><td>Treemap of customer sales; Deepak Mishra is the largest at 17,256</td></tr>
+        <tr><td>Monthly sales trend</td><td>Line chart of month-to-month sales values</td></tr>
+        <tr><td>Sales &amp; profit by category</td><td>Comparison across Furniture, Technology and Office Supplies</td></tr>
+        <tr><td>Discount impact on profit</td><td>Bar chart comparing profit across discount groups</td></tr>
+        <tr><td>Filters</td><td>Category, Segment, Region and Quarter of Order Date</td></tr>
+      </tbody></table></div>
+    </div>
+  </div>
+
+  <h3 style="margin:40px 0 12px;font-size:1.3rem">Tools and technologies</h3>
+  <div class="grid2">
+    <div class="card"><h3>SQL Server</h3><p class="note" style="margin:0">Data inspection, cleaning, updating and analysis. Evidence: SQL query screenshots. Techniques: SELECT, UPDATE, GROUP BY, HAVING, aggregate and window-based analysis.</p></div>
+    <div class="card"><h3>Tableau</h3><p class="note" style="margin:0">Visualization and interactive dashboarding. Evidence: the final dashboard with KPI cards, customer, trend, category and discount views.</p></div>
+  </div>
+
+  <h3 style="margin:40px 0 12px;font-size:1.3rem">Project objectives</h3>
+  <div class="prog"><div class="bar"><i id="oBar"></i></div><span id="oLabel"></span></div>
+  <ul class="check" id="objs"></ul>
+</div></section>
+
+<section class="blk" id="questions"><div class="wrap">
+  <h2>Business questions and observations</h2>
+  <p class="intro">Open a question to see what the dashboard reports.</p>
+  <div id="qa"></div>
+  <h3 style="margin:36px 0 14px;font-size:1.4rem">Observations supported by the dashboard</h3>
+  <ul class="finds">
+    <li><b>Total sales 160,828; total profit 41,379.</b><span>The dashboard shows 23 customers and 100 orders, with an average order value of 1,608.</span></li>
+    <li><b>Deepak Mishra is the top customer.</b><span>17,256 in sales, the largest in the Top 10 Customers treemap.</span></li>
+    <li><b>Monthly sales vary.</b><span>Labeled points include a high of 19,438 and a low of 7,312.</span></li>
+    <li><b>Category and discount views.</b><span>Furniture, Technology and Office Supplies are compared, alongside a discount-versus-profit comparison.</span></li>
+    <li><b>Filters for exploration.</b><span>Category, Segment, Region and Quarter of Order Date.</span></li>
+  </ul>
+  <h3 style="margin:36px 0 14px;font-size:1.4rem">Conclusion</h3>
+  <p>The project demonstrates an end-to-end retail analytics workflow. SQL Server inspects, cleans, updates and analyzes the data, and Tableau turns the results into an interactive sales and profit dashboard.</p>
+</div></section>
+</main>
+<footer><div class="wrap">Based on the Retail Sales &amp; Profit Performance Analytics project report. Figures are as displayed in the report.</div></footer>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const fmt=n=>n.toLocaleString('en-US');
+
+/* tooltip */
+const tip=document.createElement('div');tip.className='tip';tip.hidden=true;document.body.appendChild(tip);
+document.addEventListener('pointermove',e=>{
+  const t=e.target.closest&&e.target.closest('[data-tip]');
+  if(!t){tip.hidden=true;return}
+  tip.textContent=t.dataset.tip;tip.hidden=false;
+  tip.style.left=Math.max(8,Math.min(e.clientX+14,innerWidth-tip.offsetWidth-8))+'px';
+  tip.style.top=(e.clientY+18)+'px';
+});
+document.addEventListener('focusin',e=>{
+  const t=e.target.closest&&e.target.closest('[data-tip]');
+  if(t){const r=t.getBoundingClientRect();tip.textContent=t.dataset.tip;tip.hidden=false;tip.style.left=Math.max(8,r.left)+'px';tip.style.top=(r.bottom+6)+'px'}
+});
+document.addEventListener('focusout',()=>{tip.hidden=true});
+
+/* tabs (role=tab / role=tabpanel inside root) */
+function tabs(root,onchange){
+  const bt=$$('[role=tab]',root),ps=$$('[role=tabpanel]',root);
+  function sel(i,focus){
+    bt.forEach((b,j)=>{b.setAttribute('aria-selected',i===j);b.tabIndex=i===j?0:-1});
+    ps.forEach((p,j)=>{p.hidden=i!==j});
+    if(focus)bt[i].focus();
+    if(onchange)onchange(i);
+  }
+  bt.forEach((b,i)=>{
+    b.onclick=()=>sel(i);
+    b.onkeydown=e=>{
+      const k=e.key,n=bt.length;
+      if(k==='ArrowRight'||k==='ArrowDown'){e.preventDefault();sel((i+1)%n,1)}
+      else if(k==='ArrowLeft'||k==='ArrowUp'){e.preventDefault();sel((i-1+n)%n,1)}
+    };
+  });
+  sel(0);
+  return sel;
+}
+
+/* segmented toggle group: buttons with data-v */
+function seg(root,cb){
+  const bs=$$('button',root);
+  bs.forEach(b=>b.onclick=()=>{bs.forEach(o=>o.setAttribute('aria-pressed',o===b));cb(b.dataset.v)});
+  const first=bs.find(b=>b.getAttribute('aria-pressed')==='true')||bs[0];
+  first.setAttribute('aria-pressed',true);cb(first.dataset.v);
+}
+
+/* bars: rows = [{l,v,t,c?,tip?}] */
+function bars(node,rows,max){
+  max=max||Math.max(...rows.map(r=>r.v));
+  node.classList.remove('go');
+  node.innerHTML=rows.map(r=>`<li data-tip="${(r.tip||r.l+': '+r.t).replace(/"/g,'&quot;')}"><span class="lbl">${r.l}</span><span class="track"><i class="fill" style="--w:${(r.v/max*100).toFixed(1)}%;${r.c?'background:'+r.c:''}"></i></span><span class="val">${r.t}</span></li>`).join('');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>node.classList.add('go')));
+}
+
+/* donut: parts = [{l,p,t,c}] */
+function donut(node,parts,label){
+  const R=54,C=2*Math.PI*R;let off=0;
+  const segs=parts.map((p,i)=>{
+    const len=p.p/100*C;
+    const s=`<circle class="seg-c" data-i="${i}" cx="70" cy="70" r="${R}" fill="none" stroke-width="22" stroke-dasharray="${len} ${C-len}" stroke-dashoffset="${-off}" transform="rotate(-90 70 70)" style="stroke:${p.c}" tabindex="0" data-tip="${p.l}: ${p.t}"/>`;
+    off+=len;return s;
+  }).join('');
+  node.innerHTML=`<div class="dwrap"><svg viewBox="0 0 140 140" role="img" aria-label="${label}">${segs}<text x="70" y="70" text-anchor="middle" class="dv"></text><text x="70" y="86" text-anchor="middle" class="dl"></text></svg><ul class="legend">${parts.map((p,i)=>`<li><button data-i="${i}"><i style="background:${p.c}"></i>${p.l}<b>${p.t.split(' · ').pop()}</b></button></li>`).join('')}</ul></div>`;
+  const dv=$('.dv',node),dl=$('.dl',node),cs=$$('.seg-c',node),bs=$$('.legend button',node);
+  function show(i){
+    cs.forEach((c,j)=>c.classList.toggle('dim',j!==i));
+    bs.forEach((b,j)=>b.classList.toggle('on',j===i));
+    dv.textContent=parts[i].p.toFixed(parts[i].p%1?2:0).replace(/\.?0+$/,'')+'%';dl.textContent=parts[i].l;
+  }
+  [...cs,...bs].forEach(el=>{const i=+el.dataset.i;el.addEventListener('pointerenter',()=>show(i));el.addEventListener('focus',()=>show(i));el.addEventListener('click',()=>show(i))});
+  show(0);
+}
+
+/* sortable + searchable tables */
+function sortable(table){
+  $$('th',table).forEach((th,i)=>{
+    th.tabIndex=0;th.setAttribute('role','button');
+    const go=()=>{
+      const tb=table.tBodies[0],rows=[...tb.rows],asc=th.dataset.o!=='a';
+      $$('th',table).forEach(h=>delete h.dataset.o);th.dataset.o=asc?'a':'d';
+      rows.sort((a,b)=>{
+        const x=a.cells[i].dataset.v??a.cells[i].textContent.trim(),y=b.cells[i].dataset.v??b.cells[i].textContent.trim();
+        const nx=parseFloat(x),ny=parseFloat(y);
+        const c=(!isNaN(nx)&&!isNaN(ny))?nx-ny:String(x).localeCompare(String(y));
+        return asc?c:-c;
+      });
+      rows.forEach(r=>tb.appendChild(r));
+    };
+    th.onclick=go;th.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}};
+  });
+}
+function searchTable(input,table,countEl){
+  input.oninput=()=>{
+    const q=input.value.toLowerCase().trim();let n=0;
+    [...table.tBodies[0].rows].forEach(r=>{const ok=r.textContent.toLowerCase().includes(q);r.hidden=!ok;if(ok)n++});
+    if(countEl)countEl.textContent=n+' shown';
+  };
+}
+
+/* copy */
+function copyBtn(btn,get){
+  btn.onclick=async()=>{
+    try{await navigator.clipboard.writeText(get());btn.textContent='Copied'}catch(e){btn.textContent='Select and copy'}
+    setTimeout(()=>{btn.textContent='Copy'},1600);
+  };
+}
+
+/* checklist with progress */
+function checklist(ul,bar,label,key){
+  const boxes=$$('input',ul);let saved=[];
+  try{saved=JSON.parse(localStorage.getItem(key)||'[]')}catch(e){}
+  boxes.forEach((b,i)=>{b.checked=saved.includes(i)});
+  function upd(){
+    const done=boxes.filter(b=>b.checked).length;
+    bar.style.width=(done/boxes.length*100)+'%';label.textContent=done+' of '+boxes.length+' checked';
+    try{localStorage.setItem(key,JSON.stringify(boxes.map((b,i)=>b.checked?i:-1).filter(i=>i>=0)))}catch(e){}
+  }
+  boxes.forEach(b=>b.onchange=upd);upd();
+}
+
+/* highlight code */
+function hl(code){
+  const esc=code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return esc.replace(/(--[^\n]*)/g,'<span class="c">$1</span>')
+    .replace(/('[^']*')/g,'<span class="s">$1</span>')
+    .replace(/\b(SELECT|FROM|WHERE|UPDATE|SET|GROUP BY|HAVING|SUM|CASE|WHEN|THEN|ELSE|END|AS|IS NULL|NULL|OR|COUNT|USE|AND|DISTINCTCOUNT|AVERAGE|CALCULATE)\b/g,'<span class="k">$1</span>');
+}
+
+/* theme + scroll spy */
+(function(){
+  const b=$('#themeBtn');
+  if(b)b.onclick=()=>{
+    const r=document.documentElement,dark=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;
+    r.dataset.theme=dark?'light':'dark';b.textContent=dark?'Dark mode':'Light mode';
+  };
+  const links=$$('.top nav a'),secs=links.map(a=>$(a.getAttribute('href')));
+  if('IntersectionObserver' in window){
+    const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.toggle('on',l.getAttribute('href')==='#'+e.target.id))}}),{rootMargin:'-30% 0px -60% 0px'});
+    secs.forEach(s=>s&&io.observe(s));
+  }
+})();
+
+
+const C1='var(--accent)',C2='var(--c2)';
+tabs($('#dash'));
+
+/* customers */
+const custs=[["Deepak Mishra",17256],["Diya Malhotra",14720],["Vihaan Singh",12126],["Manish Tiwari",12058],["Amit Agarwal",10499],["Aditya Verma",9890],["Sneha Kulkarni",9787],["Neha Kapoor",8443],["Vivaan Patel",7764],["Alok Srivastava",7207]];
+const TOTAL=160828;let cSort='sales';
+function drawCust(){
+  const n=+$('#custN').value;let rows=custs.slice(0,n);
+  const sum=rows.reduce((a,r)=>a+r[1],0);
+  $('#custSum').textContent=fmt(sum);$('#custShare').textContent=(sum/TOTAL*100).toFixed(1)+'%';
+  if(cSort==='name')rows=rows.slice().sort((a,b)=>a[0].localeCompare(b[0]));
+  bars($('#custBars'),rows.map(([l,v])=>({l,v,t:fmt(v),tip:l+': '+fmt(v)+' in sales ('+(v/TOTAL*100).toFixed(1)+'% of total)'})),17256);
+}
+$('#custN').onchange=drawCust;seg($('#custSort'),v=>{cSort=v;drawCust()});
+
+/* categories */
+const cats=[["Furniture",58427,13157],["Technology",53361,14185],["Office Supplies",49040,14037]];
+$('#catTable tbody').innerHTML=cats.map(([l,s,p])=>`<tr><td>${l}</td><td class="num" data-v="${s}">${fmt(s)}</td><td class="num" data-v="${p}">${fmt(p)}</td><td class="num" data-v="${p/s}">${(p/s*100).toFixed(1)}%</td></tr>`).join('');
+sortable($('#catTable'));
+seg($('#catMetric'),m=>{
+  const ul=$('#catBars');
+  const k=$('#catKey');
+  if(m==='both'){
+    $('#catTitle').textContent='Sales and profit by category';
+    k.innerHTML=`<span><i style="background:${C1}"></i>Sales</span><span><i style="background:${C2}"></i>Profit</span>`;
+    const rows=[];cats.forEach(([l,s,p])=>{rows.push({l:l,v:s,t:fmt(s),c:C1,tip:l+' sales: '+fmt(s)});rows.push({l:'<span style="color:var(--muted);padding-left:14px">profit</span>',v:p,t:fmt(p),c:C2,tip:l+' profit: '+fmt(p)})});
+    bars(ul,rows,60000);
+  }else{
+    const idx={sales:1,profit:2}[m];k.innerHTML='';
+    $('#catTitle').textContent={sales:'Sales by category',profit:'Profit by category',margin:'Profit margin by category'}[m];
+    if(m==='margin')bars(ul,cats.map(([l,s,p])=>({l,v:p/s,t:(p/s*100).toFixed(1)+'%',c:C2})),0.35);
+    else bars(ul,cats.map(c=>({l:c[0],v:c[idx],t:fmt(c[idx]),c:m==='profit'?C2:C1})),idx===1?60000:16000);
+  }
+});
+
+/* discounts */
+const disc=[["High discount",45496,12683],["Medium (1)",43770,9930],["Medium (2)",37552,9946],["Low discount",34010,8819]];
+$('#discTable tbody').innerHTML=disc.map(([l,s,p])=>`<tr><td>${l}</td><td class="num" data-v="${s}">${fmt(s)}</td><td class="num" data-v="${p}">${fmt(p)}</td><td class="num" data-v="${p/s*100}">${(p/s*100).toFixed(1)}</td></tr>`).join('');
+sortable($('#discTable'));
+seg($('#discMetric'),m=>{
+  $('#discTitle').textContent={profit:'Profit by discount group',sales:'Sales by discount group',ratio:'Profit per 100 sales by discount group'}[m];
+  if(m==='ratio')bars($('#discBars'),disc.map(([l,s,p])=>({l,v:p/s*100,t:(p/s*100).toFixed(1),c:C2})),30);
+  else{const i=m==='sales'?1:2;bars($('#discBars'),disc.map(d=>({l:d[0],v:d[i],t:fmt(d[i]),c:m==='sales'?C1:C2})),m==='sales'?50000:14000)}
+});
+
+$('#swing').textContent=fmt(19438-7312);
+
+/* SQL steps */
+const steps=[
+ ["Retrieve the data","Retrieve the Superstore_sql table and review the available fields and records.","USE SQLTABLEAU;\n\nSELECT * FROM Superstore_sql;"],
+ ["Inspect columns and data types","Query INFORMATION_SCHEMA.COLUMNS, filtered to the dbo schema and the Superstore_sql table.","SELECT COLUMN_NAME, DATA_TYPE\nFROM INFORMATION_SCHEMA.COLUMNS\nWHERE TABLE_SCHEMA = 'dbo'\n  AND TABLE_NAME = 'Superstore_sql';"],
+ ["Check missing values","Count NULLs in Order_ID, Order_Date, Customer_Name, Sales and Profit using SUM with CASE.","SELECT\n  SUM(CASE WHEN Order_ID      IS NULL THEN 1 ELSE 0 END) AS order_id_null,\n  SUM(CASE WHEN Order_Date    IS NULL THEN 1 ELSE 0 END) AS order_date_null,\n  SUM(CASE WHEN Customer_Name IS NULL THEN 1 ELSE 0 END) AS customer_name_null,\n  SUM(CASE WHEN Sales         IS NULL THEN 1 ELSE 0 END) AS sales_null,\n  SUM(CASE WHEN Profit        IS NULL THEN 1 ELSE 0 END) AS profit_null\nFROM Superstore_sql;"],
+ ["Update missing values","Missing Profit becomes 0. A missing or blank Customer_Name becomes 'Unknown'.","UPDATE Superstore_sql\nSET Profit = 0\nWHERE Profit IS NULL;\n\nUPDATE Superstore_sql\nSET Customer_Name = 'Unknown'\nWHERE Customer_Name IS NULL OR Customer_Name = '';"],
+ ["Check duplicate orders","Find Order_ID values that appear more than once.","SELECT Order_ID, COUNT(*) AS duplicate_count\nFROM Superstore_sql\nGROUP BY Order_ID\nHAVING COUNT(*) > 1;"],
+ ["Analyze with SQL","Apply aggregate and window-based analysis for business-level summaries.",null,"The exact window-function statements are not shown in the report screenshots, so none are reproduced here."],
+ ["Prepare outputs for Tableau","Prepare the analytical results for visualization.",null],
+ ["Build the Tableau visuals","KPI cards, top customers treemap, monthly sales trend, sales and profit by category, and discount impact on profit.",null],
+ ["Add dashboard filters","Filters for Category, Segment, Region and Quarter of Order Date make the dashboard interactive.",null]
+];
+let si=0;
+$('#stepList').innerHTML=steps.map((s,i)=>`<button type="button" role="tab" aria-selected="${i===0}" data-i="${i}"><i>${i+1}</i>${s[0]}</button>`).join('');
+function drawStep(){
+  const s=steps[si];
+  $$('#stepList button').forEach((b,i)=>{b.setAttribute('aria-selected',i===si);b.tabIndex=i===si?0:-1});
+  $('#stepTitle').textContent='Step '+(si+1)+': '+s[0];$('#stepDesc').textContent=s[1];
+  $('#stepCodeBox').hidden=!s[2];if(s[2])$('#stepCode').innerHTML=hl(s[2]);
+  $('#stepNote').hidden=!s[3];$('#stepNote').textContent=s[3]||'';
+  $('#prev').disabled=si===0;$('#next').disabled=si===steps.length-1;
+}
+$$('#stepList button').forEach(b=>{b.onclick=()=>{si=+b.dataset.i;drawStep()};
+  b.onkeydown=e=>{if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();si=(si+(e.key==='ArrowDown'?1:-1)+steps.length)%steps.length;drawStep();$$('#stepList button')[si].focus()}}});
+$('#prev').onclick=()=>{if(si>0){si--;drawStep()}};$('#next').onclick=()=>{if(si<steps.length-1){si++;drawStep()}};
+copyBtn($('#stepCopy'),()=>steps[si][2]||'');drawStep();
+
+/* reference */
+["Order_ID","Order_Date","Customer_Name","Segment","Region","Category","Product_Name","Sales","Quantity","Discount","Profit"].forEach(f=>{const s=document.createElement('span');s.className='chip';s.textContent=f;$('#fields').appendChild(s)});
+searchTable($('#techSearch'),$('#techTable'));sortable($('#techTable'));
+searchTable($('#compSearch'),$('#compTable'));sortable($('#compTable'));
+const objs=["Inspect the structure and contents of the retail table before analysis.","Identify null values and potential duplicate Order_ID records.","Update missing or invalid values where required.","Use SQL aggregate functions for business-level summaries.","Use SQL window functions for analytical calculations.","Use filtering and grouping techniques such as GROUP BY and HAVING.","Prepare analytical outputs for Tableau.","Build an interactive dashboard for sales and profit performance analysis."];
+$('#objs').innerHTML=objs.map(o=>`<li><label><input type="checkbox"><span>${o}</span></label></li>`).join('');
+checklist($('#objs'),$('#oBar'),$('#oLabel'),'retail-objectives');
+
+const qa=[
+ ["What are the overall sales, profit, customer and order figures?","Total sales 160,828; total profit 41,379; 23 customers; 100 orders; average order value 1,608."],
+ ["Which customers contribute the most sales?","Deepak Mishra leads the Top 10 Customers treemap at 17,256."],
+ ["How do sales change over the displayed months?","The line chart shows visible month-to-month variation, with a labeled high of 19,438 and low of 7,312."],
+ ["How are the displayed categories performing?","Furniture, Technology and Office Supplies are compared on sales and profit."],
+ ["How does profit vary across discount groups?","A bar chart compares profit across the displayed discount groups."],
+ ["How can the dashboard be filtered?","By Category, Segment, Region and Quarter of Order Date."]
+];
+$('#qa').innerHTML=qa.map(([q,a])=>`<details><summary>${q}</summary><div>${a}</div></details>`).join('');
+</script>
+</body>
+</html>
